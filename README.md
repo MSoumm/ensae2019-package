@@ -1,8 +1,8 @@
-##Description
+## Description
 This package contains 2 function,`plot_geo_time_value()` and `plot_gif_geo_time_value()`, used to draw input data on a map of France.
 
-##Usage
-####`plot_geo_time_value(x, y, year, value, proj='mercator',  axs=None, name=[], hue='', **kwargs)`
+## Usage
+#### `plot_geo_time_value(x, y, year, value, proj='mercator',  axs=None, name=[], hue='', **kwargs)`
 
 Draws input data values on a series of maps of France (Matplotlib subplots), 1 per year
 
@@ -36,7 +36,7 @@ name  | names of the places to draw (vector)
 hue  | meaning of the values (string)
 
 
-##Example of usage
+## Example of usage
 ```
 fig, axs = plt.subplots(2, 2, figsize=(20,20), subplot_kw={'projection': ccrs.Mercator()})
 
