@@ -1,5 +1,5 @@
 ## Description
-This package contains 2 function,`plot_geo_time_value()` and `plot_gif_geo_time_value()`, used to draw input data on a map of France.
+This package contains 2 functions,`plot_geo_time_value()` and `plot_gif_geo_time_value()`, used to draw input data on a map of France.
 
 ## Usage
 #### `plot_geo_time_value(x, y, year, value, proj='mercator',  axs=None, name=[], hue='', **kwargs)`
