@@ -11,7 +11,7 @@ setuptools.setup(
     description="Small package to show data with cartopy",
     long_description=long_description,
     long_description_content_type="text/markdown",
-    url="https://github.com/gabsens/Python-for-Data-Scientists-ENSAE",
+    url="https://github.com/MSoumm/ensae2019-package",
     packages=setuptools.find_packages(),
     classifiers=[
         "Programming Language :: Python :: 3",

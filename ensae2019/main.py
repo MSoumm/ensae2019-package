@@ -6,7 +6,7 @@ import matplotlib.animation as anim
 import numpy as np
 
 
-def __convert_long_lat(x, y, proj='mercator'):
+def convert_long_lat(x, y, proj='mercator'):
     # Transformation des coordonnées
     p1 = Proj(init='epsg:4326')  # longitude / latitude
 
@@ -16,13 +16,15 @@ def __convert_long_lat(x, y, proj='mercator'):
         epsg = 'epsg:3395'
     elif proj == 'plate':
         epsg = 'epsg:4326'
+    else:
+        epsg = 'epsg:3395'
 
     p2 = Proj(init=epsg)
 
     return transform(p1, p2, list(x), list(y))
 
 
-def __draw_subplot(ax, long, lat, values, year, y, hue):
+def draw_subplot(ax, long, lat, values, year, y, hue):
     lim_metropole = [-5, 10, 41, 52]
     ax.clear()
     ax.set_extent(lim_metropole)
@@ -35,14 +37,14 @@ def __draw_subplot(ax, long, lat, values, year, y, hue):
         ax.set_title('Production de ' + hue + '\nen France en ' + str(year[y]), fontsize=10)
 
 
-def __draw_plot(axs, long, lat, value, year, hue):
+def draw_plot(axs, long, lat, value, year, hue):
     if hue != '':
         plt.gcf().suptitle('Evolution de ' + hue + '\nen France de ' + str(min(year)) + ' à ' + str(max(year)),
                            fontsize=14)
 
     if np.shape(axs) == ():
         # Si on a juste 1 année
-        __draw_subplot(axs, long, lat, value, 0, hue)
+        draw_subplot(axs, long, lat, value, year, 0, hue)
     else:
         y = 0
         try:
@@ -50,14 +52,15 @@ def __draw_plot(axs, long, lat, value, year, hue):
             a, b = np.shape(axs)
             for i in range(a):
                 for j in range(b):
-                    __draw_subplot(axs[i][j], long, lat, value, year, y, hue)
+                    draw_subplot(axs[i][j], long, lat, value, year, y, hue)
                     y += 1
+            return axs
         except ValueError:
             # Si les subplots sont un vecteur ligne ou colonne
             for i in range(len(axs)):
-                __draw_subplot(axs[i], long, lat, value, year, y, hue)
+                draw_subplot(axs[i], long, lat, value, year, y, hue)
                 y += 1
-
+    return axs
 
 def plot_geo_time_value(x, y, year, value, proj='mercator', axs=None, name=[], hue='', **kwargs):
     """
@@ -79,9 +82,9 @@ def plot_geo_time_value(x, y, year, value, proj='mercator', axs=None, name=[], h
     if isinstance(value, pd.DataFrame):
         value = value.to_numpy()
 
-    long, lat = __convert_long_lat(x, y, proj)
+    long, lat = convert_long_lat(x, y, proj)
 
-    __draw_plot(axs, long, lat, value, year, hue)
+    draw_plot(axs, long, lat, value, year, hue)
 
     plt.gcf().savefig("output.pdf")
 
@@ -109,15 +112,17 @@ def plot_gif_geo_time_value(x, y, year, value, proj='mercator', method='gif', fi
     if isinstance(value, pd.DataFrame):
         value = value.to_numpy()
 
-
     if fig == None:
         fig = plt.gcf()
 
-    long, lat = __convert_long_lat(x, y, proj)
+    long, lat = convert_long_lat(x, y, proj)
 
     def animate(k):
-        __draw_subplot(ax, long, lat, value, year, k, hue)
+        draw_subplot(ax, long, lat, value, year, k, hue)
 
     animation = anim.FuncAnimation(fig, animate, frames=len(year), blit=False, repeat=True)
 
-    animation.save("output." + method, fps=1)
+    try:
+        animation.save("output." + method, fps=1)
+    except ValueError:
+        animation.save("output.gif", fps=1)
